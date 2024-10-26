@@ -16,9 +16,9 @@ provider "helm" {
 }
 
 resource "helm_release" "shortlist_runner" {
-  name  = "dev"
+  name       = "dev"
   repository = "https://simoncrowe.github.io/helm"
-  chart = "shortlist-runner"
+  chart      = "shortlist-runner"
 
   namespace        = "shortlist"
   create_namespace = true
