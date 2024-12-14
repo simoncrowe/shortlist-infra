@@ -4,7 +4,7 @@ terraform {
     key    = "shortlist/dev"
     region = "eu-north-1"
   }
-  
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
