@@ -14,13 +14,17 @@ resource "google_container_cluster" "primary" {
   subnetwork = google_compute_subnetwork.primary_europe_west_1.id
 
   deletion_protection = false
+
+  identity_service_config {
+    enabled = true
+  }
 }
 
 resource "google_container_node_pool" "primary_general_purpose" {
   name       = "shortlist-general-purpose"
   location   = "europe-west1-b"
   cluster    = google_container_cluster.primary.name
-  node_count = 1
+  node_count = 2 
 
   node_config {
     machine_type = "e2-small"
