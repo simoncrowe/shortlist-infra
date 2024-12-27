@@ -31,7 +31,10 @@ resource "helm_release" "runner" {
     name  = "runner.notifierUrl"
     value = "http://dev-shortlist-notifier.shortlist.svc.cluster.local/api/v1/notifcations"
   }
-
+  
+  depends_on = [
+    google_container_node_pool.primary_general_purpose
+  ]
 }
 
 resource "helm_release" "rm_ingester" {
@@ -62,6 +65,9 @@ resource "helm_release" "rm_ingester" {
     value = var.rm_results_url
   }
 
+  depends_on = [
+    google_container_node_pool.primary_general_purpose
+  ]
 }
 
 resource "random_password" "redis_password" {
@@ -81,8 +87,13 @@ resource "helm_release" "redis" {
     name  = "architecture"
     value = "standalone"
   }
+  
   set {
     name  = "auth.password"
     value = random_password.redis_password.result
   }
+  
+  depends_on = [
+    google_container_node_pool.primary_general_purpose
+  ]
 }

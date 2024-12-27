@@ -15,8 +15,8 @@ resource "google_container_cluster" "primary" {
 
   deletion_protection = false
 
-  identity_service_config {
-    enabled = true
+  workload_identity_config {
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
   }
 }
 
