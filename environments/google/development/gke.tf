@@ -32,6 +32,11 @@ resource "google_container_node_pool" "primary_general_purpose" {
     service_account = google_service_account.kubernetes.email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
-    ]
+      ]
+  }
+
+  lifecycle {
+    # Trying to reconcile kubelet_config in state file with actual state leads to bad API request
+    ignore_changes = [node_config[0].kubelet_config]
   }
 }

@@ -1,5 +1,5 @@
 resource "aws_iam_openid_connect_provider" "gke_cluster" {
-  url             = var.gke_oidc_issuer_url  
+  url             = "https://${var.gke_oidc_issuer_hostpath}"
   client_id_list  = ["sts.amazonaws.com"]
 }
 
@@ -7,7 +7,7 @@ resource "aws_iam_openid_connect_provider" "gke_cluster" {
 data "aws_iam_policy_document" "send_email" {
   statement {
     actions   = ["ses:SendRawEmail", "ses:SendEmail"]
-    resources = [module.email.ses_domain_identity_arn]
+    resources = ["*"]
   }
 }
 
@@ -30,19 +30,19 @@ data "aws_iam_policy_document" "gke_assume_role" {
 
     condition {
       test = "StringEquals"
-      variable = "${var.gke_oidc_issuer_hostname}:sub"
-      values = ["system:serviceaccount:default:${var.gke_service_account_id}"]
+      variable = "${var.gke_oidc_issuer_hostpath}:sub"
+      values = [var.k8s_service_account_id]
     }
   }
 }
 
 resource "aws_iam_role" "email_sender" {
   name = "email-sender"
-  assume_role_policy = data.aws_iam_policy_document.gke_assume_role
+  assume_role_policy = data.aws_iam_policy_document.gke_assume_role.json
 }
 
 
 resource "aws_iam_role_policy_attachment" "email_sender" {
-  role = aws_iam_role.email_sender
+  role = aws_iam_role.email_sender.name
   policy_arn = aws_iam_policy.send_email.arn
 }

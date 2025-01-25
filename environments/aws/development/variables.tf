@@ -3,12 +3,12 @@ variable "domain" {
   type        = string
 }
 
-variable "gke_oidc_issuer_hostname" {
-  description = "The GKE cluster's OIDC issuer hostname. (The GKE cluster that sends email)"
+variable "gke_oidc_issuer_hostpath" {
+  description = "The GKE cluster's OIDC issuer hostname and path. (The GKE cluster that sends email)"
   type        = string
 }
 
-variable "gke_service_account_id" {
-  description = "The GKE cluster's service account ID. (The GKE cluster that sends email)"
+variable "k8s_service_account_id" {
+  description = "The ID of the ServiceAccount of the workload that sends the email in the k8s (GKE) cluser"
   type        = string
 }

@@ -70,6 +70,47 @@ resource "helm_release" "rm_ingester" {
   ]
 }
 
+resource "helm_release" "rm_emailer" {
+  for_each = var.rm_destination_email == "" ? [] : toset(["enabled"])
+
+  name       = "email-dev"
+  repository = "https://simoncrowe.github.io/helm"
+  chart      = "shortlist-rm-email-notifier"
+  version    = "0.2.0"
+
+  namespace        = "shortlist"
+  create_namespace = true
+
+  set {
+    name  = "aws.roleArn"
+    value = var.rm_emailer_aws_role_arn
+  }
+
+  set { 
+    name = "aws.region"
+    value = var.rm_emailer_aws_region
+  }
+
+  set {
+    name = "aws.sesIdentityArn"
+    value = var.rm_emailer_aws_ses_identity_arn
+  }
+
+  set {
+    name  = "emailer.destinationEmail"
+    value = var.rm_destination_email
+  }
+
+  set {
+    name  = "emailer.sourceEmail"
+    value = var.rm_source_email
+  }
+  
+  depends_on = [
+    google_container_node_pool.primary_general_purpose
+  ]
+}
+
 resource "random_password" "redis_password" {
   length  = 32
   special = true
