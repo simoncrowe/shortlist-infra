@@ -18,6 +18,7 @@ resource "helm_release" "runner" {
   name       = "run-dev"
   repository = "https://simoncrowe.github.io/helm"
   chart      = "shortlist-runner"
+  version    = "0.1.4"
 
   namespace        = "shortlist"
   create_namespace = true
@@ -29,7 +30,7 @@ resource "helm_release" "runner" {
 
   set {
     name  = "runner.notifierUrl"
-    value = "http://dev-shortlist-notifier.shortlist.svc.cluster.local/api/v1/notifcations"
+    value = "http://email-dev-shortlist-rm-email-notifier.shortlist.svc.cluster.local/api/v1/profiles"
   }
   
   depends_on = [
@@ -43,7 +44,7 @@ resource "helm_release" "rm_ingester" {
   name       = "ingest-dev"
   repository = "https://simoncrowe.github.io/helm"
   chart      = "shortlist-rm-ingester"
-  version    = "0.1.1"
+  version    = "1.0.9"
 
   namespace        = "shortlist"
   create_namespace = true
@@ -52,17 +53,25 @@ resource "helm_release" "rm_ingester" {
     name  = "redis.hostname"
     value = "${helm_release.redis.name}-master.shortlist.svc.cluster.local"
   }
+  
   set {
     name  = "redis.password"
     value = random_password.redis_password.result
   }
+  
   set {
     name  = "ingester.runnerUrl"
     value = "http://${helm_release.runner.name}-shortlist-runner.shortlist.svc.cluster.local/api/v1/profiles"
   }
+  
   set {
     name  = "ingester.resultsUrl"
     value = var.rm_results_url
+  }
+  
+  set {
+    name  = "ingester.baseListingUrl"
+    value = var.base_listing_url 
   }
 
   depends_on = [
@@ -76,7 +85,7 @@ resource "helm_release" "rm_emailer" {
   name       = "email-dev"
   repository = "https://simoncrowe.github.io/helm"
   chart      = "shortlist-rm-email-notifier"
-  version    = "0.2.0"
+  version    = "0.2.5"
 
   namespace        = "shortlist"
   create_namespace = true

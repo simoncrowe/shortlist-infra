@@ -37,6 +37,6 @@ resource "google_container_node_pool" "primary_general_purpose" {
 
   lifecycle {
     # Trying to reconcile kubelet_config in state file with actual state leads to bad API request
-    ignore_changes = [node_config[0].kubelet_config]
+    ignore_changes = [node_config[0].kubelet_config, node_config[0].resource_labels]
   }
 }

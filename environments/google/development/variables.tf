@@ -5,6 +5,17 @@ variable "rm_results_url" {
   default     = ""
 }
 
+variable "base_listing_url" {
+  description = "The base URL onto which to append listing IDs" 
+  type        = string
+  default     = ""
+}
+
+variable "rm_source_email" {
+  description = "The email from which to send selected RM profiles"
+  type = string
+}
+
 variable "rm_destination_email" {
   description = "The email to send selected RM profiles to" 
   type        = string
