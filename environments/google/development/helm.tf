@@ -18,21 +18,46 @@ resource "helm_release" "runner" {
   name       = "run-dev"
   repository = "https://simoncrowe.github.io/helm"
   chart      = "shortlist-runner"
-  version    = "0.1.4"
+  version    = "1.0.2"
 
   namespace        = "shortlist"
   create_namespace = true
-
-  set {
-    name  = "runner.assessorImage"
-    value = "ghcr.io/simoncrowe/shortlist-dummy-assessors:main"
-  }
 
   set {
     name  = "runner.notifierUrl"
     value = "http://email-dev-shortlist-rm-email-notifier.shortlist.svc.cluster.local/api/v1/profiles"
   }
   
+  set {
+    name = "runner.nodePool"
+    value = "shortlist-gpu"
+  }
+  
+  set {
+    name  = "assessor.image"
+    value = "ghcr.io/simoncrowe/shortlist-llm-assessor:0.1.0"
+  }
+
+  set {
+    name = "assessor.llmSystemPrompt"
+    value = var.assessor_llm_system_prompt
+  }
+
+  set {
+    name = "assessor.llmPositiveResponseRegex"
+    value = var.assessor_llm_positive_response_regex
+  }
+  
+  set {
+    name = "assessor.nodeSelectorKey"
+    value = "cloud.google.com/gke-nodepool"
+  }
+
+  set {
+    name = "assessor.nodeSelectorValue"
+    value = "shortlist-gpu"
+  }
+
   depends_on = [
     google_container_node_pool.primary_general_purpose
   ]
@@ -44,7 +69,7 @@ resource "helm_release" "rm_ingester" {
   name       = "ingest-dev"
   repository = "https://simoncrowe.github.io/helm"
   chart      = "shortlist-rm-ingester"
-  version    = "1.0.9"
+  version    = "1.0.10"
 
   namespace        = "shortlist"
   create_namespace = true

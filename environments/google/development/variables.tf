@@ -39,3 +39,15 @@ variable "rm_emailer_aws_region" {
   type = string
   default = ""
 }
+
+variable "assessor_llm_system_prompt" {
+  description = "The system prompt telling LLMs how to assess profiles"
+  type = string
+}
+
+variable "assessor_llm_positive_response_regex" {
+  description = "The regular expression used to match positive responses from LLMs"
+  type = string
+  default = "[Yy][Ee][Ss]"
+}
+
