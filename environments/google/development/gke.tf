@@ -14,13 +14,17 @@ resource "google_container_cluster" "primary" {
   subnetwork = google_compute_subnetwork.primary_europe_west_1.id
 
   deletion_protection = false
+
+  workload_identity_config {
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+  }
 }
 
 resource "google_container_node_pool" "primary_general_purpose" {
   name       = "shortlist-general-purpose"
   location   = "europe-west1-b"
   cluster    = google_container_cluster.primary.name
-  node_count = 1
+  node_count = 2 
 
   node_config {
     machine_type = "e2-small"
@@ -28,6 +32,11 @@ resource "google_container_node_pool" "primary_general_purpose" {
     service_account = google_service_account.kubernetes.email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
-    ]
+      ]
+  }
+
+  lifecycle {
+    # Trying to reconcile kubelet_config in state file with actual state leads to bad API request
+    ignore_changes = [node_config[0].kubelet_config, node_config[0].resource_labels]
   }
 }

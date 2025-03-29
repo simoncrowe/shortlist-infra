@@ -18,6 +18,7 @@ resource "helm_release" "runner" {
   name       = "run-dev"
   repository = "https://simoncrowe.github.io/helm"
   chart      = "shortlist-runner"
+  version    = "0.1.4"
 
   namespace        = "shortlist"
   create_namespace = true
@@ -29,9 +30,12 @@ resource "helm_release" "runner" {
 
   set {
     name  = "runner.notifierUrl"
-    value = "http://dev-shortlist-notifier.shortlist.svc.cluster.local/api/v1/notifcations"
+    value = "http://email-dev-shortlist-rm-email-notifier.shortlist.svc.cluster.local/api/v1/profiles"
   }
-
+  
+  depends_on = [
+    google_container_node_pool.primary_general_purpose
+  ]
 }
 
 resource "helm_release" "rm_ingester" {
@@ -40,7 +44,7 @@ resource "helm_release" "rm_ingester" {
   name       = "ingest-dev"
   repository = "https://simoncrowe.github.io/helm"
   chart      = "shortlist-rm-ingester"
-  version    = "0.1.1"
+  version    = "1.0.9"
 
   namespace        = "shortlist"
   create_namespace = true
@@ -49,19 +53,71 @@ resource "helm_release" "rm_ingester" {
     name  = "redis.hostname"
     value = "${helm_release.redis.name}-master.shortlist.svc.cluster.local"
   }
+  
   set {
     name  = "redis.password"
     value = random_password.redis_password.result
   }
+  
   set {
     name  = "ingester.runnerUrl"
     value = "http://${helm_release.runner.name}-shortlist-runner.shortlist.svc.cluster.local/api/v1/profiles"
   }
+  
   set {
     name  = "ingester.resultsUrl"
     value = var.rm_results_url
   }
+  
+  set {
+    name  = "ingester.baseListingUrl"
+    value = var.base_listing_url 
+  }
 
+  depends_on = [
+    google_container_node_pool.primary_general_purpose
+  ]
+}
+
+resource "helm_release" "rm_emailer" {
+  for_each = var.rm_destination_email == "" ? [] : toset(["enabled"])
+
+  name       = "email-dev"
+  repository = "https://simoncrowe.github.io/helm"
+  chart      = "shortlist-rm-email-notifier"
+  version    = "0.2.5"
+
+  namespace        = "shortlist"
+  create_namespace = true
+
+  set {
+    name  = "aws.roleArn"
+    value = var.rm_emailer_aws_role_arn
+  }
+
+  set { 
+    name = "aws.region"
+    value = var.rm_emailer_aws_region
+  }
+
+  set {
+    name = "aws.sesIdentityArn"
+    value = var.rm_emailer_aws_ses_identity_arn
+  }
+
+  set {
+    name  = "emailer.destinationEmail"
+    value = var.rm_destination_email
+  }
+
+  set {
+    name  = "emailer.sourceEmail"
+    value = var.rm_source_email
+  }
+  
+  depends_on = [
+    google_container_node_pool.primary_general_purpose
+  ]
 }
 
 resource "random_password" "redis_password" {
@@ -81,8 +137,13 @@ resource "helm_release" "redis" {
     name  = "architecture"
     value = "standalone"
   }
+  
   set {
     name  = "auth.password"
     value = random_password.redis_password.result
   }
+  
+  depends_on = [
+    google_container_node_pool.primary_general_purpose
+  ]
 }
