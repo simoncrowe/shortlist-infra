@@ -70,7 +70,7 @@ resource "helm_release" "runner" {
 
   depends_on = [
     google_container_node_pool.primary_general_purpose,
-    google_storage_bucket.assessor_cache,
+    data.google_storage_bucket.assessor_cache,
   ]
 }
 

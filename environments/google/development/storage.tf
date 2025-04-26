@@ -2,12 +2,9 @@ locals {
   assessor_cache_bucket_name = "dev-shortlist-assesor-cache"
 }
 
-resource "google_storage_bucket" "assessor_cache" {
-  name          = local.assessor_cache_bucket_name
-  location      = "EU"
-  force_destroy = true
-
-  public_access_prevention = "enforced"
+# The cache bucket maintained out of band to avoid unnessary model downloads
+data "google_storage_bucket" "assessor_cache" {
+  name      = local.assessor_cache_bucket_name
 }
 
 resource "google_storage_bucket_iam_binding" "binding" {
