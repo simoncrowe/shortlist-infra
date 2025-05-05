@@ -30,7 +30,7 @@ resource "helm_release" "runner" {
 
   set {
     name  = "assessor.image"
-    value = "ghcr.io/simoncrowe/shortlist-llm-assessor:1.1.1"
+    value = "ghcr.io/simoncrowe/shortlist-llm-assessor:1.1.10"
   }
 
   set {
@@ -40,7 +40,7 @@ resource "helm_release" "runner" {
 
   set {
     name  = "assessor.cacheBucketName"
-    value = local.assessor_cache_bucket_name
+    value = var.assessor_cache_bucket_name
   }
 
   set {

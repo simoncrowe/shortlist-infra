@@ -55,3 +55,8 @@ variable "assessor_llm_access_token" {
   description = "Token granting access to the assessor LLM model"
   type        = string
 }
+
+variable "assessor_cache_bucket_name" {
+  description = "Name fo the GCS bucket used to store the assessor model cache (maintaineed out of band to avoid unnesseary downloads)"
+  type = string  
+}
