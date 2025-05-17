@@ -30,7 +30,7 @@ resource "helm_release" "runner" {
 
   set {
     name  = "assessor.image"
-    value = "ghcr.io/simoncrowe/shortlist-llm-assessor:1.1.1"
+    value = "ghcr.io/simoncrowe/shortlist-llm-assessor:1.1.14"
   }
 
   set {
@@ -40,7 +40,7 @@ resource "helm_release" "runner" {
 
   set {
     name  = "assessor.cacheBucketName"
-    value = local.assessor_cache_bucket_name
+    value = var.assessor_cache_bucket_name
   }
 
   set {
@@ -80,7 +80,7 @@ resource "helm_release" "rm_ingester" {
   name       = "ingest-dev"
   repository = "https://simoncrowe.github.io/helm"
   chart      = "shortlist-rm-ingester"
-  version    = "1.0.10"
+  version    = "1.0.11"
 
   namespace        = "shortlist"
   create_namespace = true
@@ -121,7 +121,7 @@ resource "helm_release" "rm_emailer" {
   name       = "email-dev"
   repository = "https://simoncrowe.github.io/helm"
   chart      = "shortlist-rm-email-notifier"
-  version    = "0.2.5"
+  version    = "0.2.6"
 
   namespace        = "shortlist"
   create_namespace = true
