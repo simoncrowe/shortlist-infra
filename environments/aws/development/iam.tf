@@ -1,6 +1,6 @@
 resource "aws_iam_openid_connect_provider" "gke_cluster" {
-  url             = "https://${var.gke_oidc_issuer_hostpath}"
-  client_id_list  = ["sts.amazonaws.com"]
+  url            = "https://${var.gke_oidc_issuer_hostpath}"
+  client_id_list = ["sts.amazonaws.com"]
 }
 
 
@@ -29,20 +29,20 @@ data "aws_iam_policy_document" "gke_assume_role" {
     }
 
     condition {
-      test = "StringEquals"
+      test     = "StringEquals"
       variable = "${var.gke_oidc_issuer_hostpath}:sub"
-      values = [var.k8s_service_account_id]
+      values   = [var.k8s_service_account_id]
     }
   }
 }
 
 resource "aws_iam_role" "email_sender" {
-  name = "email-sender"
+  name               = "email-sender"
   assume_role_policy = data.aws_iam_policy_document.gke_assume_role.json
 }
 
 
 resource "aws_iam_role_policy_attachment" "email_sender" {
-  role = aws_iam_role.email_sender.name
+  role       = aws_iam_role.email_sender.name
   policy_arn = aws_iam_policy.send_email.arn
 }

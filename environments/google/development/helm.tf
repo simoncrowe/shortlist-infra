@@ -18,23 +18,59 @@ resource "helm_release" "runner" {
   name       = "run-dev"
   repository = "https://simoncrowe.github.io/helm"
   chart      = "shortlist-runner"
-  version    = "0.1.4"
+  version    = "2.1.3"
 
   namespace        = "shortlist"
   create_namespace = true
 
   set {
-    name  = "runner.assessorImage"
-    value = "ghcr.io/simoncrowe/shortlist-dummy-assessors:main"
-  }
-
-  set {
     name  = "runner.notifierUrl"
     value = "http://email-dev-shortlist-rm-email-notifier.shortlist.svc.cluster.local/api/v1/profiles"
   }
-  
+
+  set {
+    name  = "assessor.image"
+    value = "ghcr.io/simoncrowe/shortlist-llm-assessor:1.1.14"
+  }
+
+  set {
+    name  = "assessor.googleServiceAccountEmail"
+    value = google_service_account.kubernetes.email
+  }
+
+  set {
+    name  = "assessor.cacheBucketName"
+    value = var.assessor_cache_bucket_name
+  }
+
+  set {
+    name  = "assessor.config.llmSystemPrompt"
+    value = var.assessor_llm_system_prompt
+  }
+
+  set {
+    name  = "assessor.config.llmPositiveResponseRegex"
+    value = var.assessor_llm_positive_response_regex
+  }
+
+  set {
+    name  = "assessor.config.accessToken"
+    value = var.assessor_llm_access_token
+  }
+
+  set {
+    name  = "assessor.nodeSelectorKey"
+    value = "cloud.google.com/gke-nodepool"
+  }
+
+  set {
+    name  = "assessor.nodeSelectorValue"
+    value = "shortlist-gpu"
+  }
+
   depends_on = [
-    google_container_node_pool.primary_general_purpose
+    google_container_node_pool.primary_general_purpose,
+    data.google_storage_bucket.assessor_cache,
   ]
 }
 
@@ -44,7 +80,7 @@ resource "helm_release" "rm_ingester" {
   name       = "ingest-dev"
   repository = "https://simoncrowe.github.io/helm"
   chart      = "shortlist-rm-ingester"
-  version    = "1.0.9"
+  version    = "1.0.11"
 
   namespace        = "shortlist"
   create_namespace = true
@@ -53,25 +89,25 @@ resource "helm_release" "rm_ingester" {
     name  = "redis.hostname"
     value = "${helm_release.redis.name}-master.shortlist.svc.cluster.local"
   }
-  
+
   set {
     name  = "redis.password"
     value = random_password.redis_password.result
   }
-  
+
   set {
     name  = "ingester.runnerUrl"
     value = "http://${helm_release.runner.name}-shortlist-runner.shortlist.svc.cluster.local/api/v1/profiles"
   }
-  
+
   set {
     name  = "ingester.resultsUrl"
     value = var.rm_results_url
   }
-  
+
   set {
     name  = "ingester.baseListingUrl"
-    value = var.base_listing_url 
+    value = var.base_listing_url
   }
 
   depends_on = [
@@ -85,7 +121,7 @@ resource "helm_release" "rm_emailer" {
   name       = "email-dev"
   repository = "https://simoncrowe.github.io/helm"
   chart      = "shortlist-rm-email-notifier"
-  version    = "0.2.5"
+  version    = "0.2.6"
 
   namespace        = "shortlist"
   create_namespace = true
@@ -95,13 +131,13 @@ resource "helm_release" "rm_emailer" {
     value = var.rm_emailer_aws_role_arn
   }
 
-  set { 
-    name = "aws.region"
+  set {
+    name  = "aws.region"
     value = var.rm_emailer_aws_region
   }
 
   set {
-    name = "aws.sesIdentityArn"
+    name  = "aws.sesIdentityArn"
     value = var.rm_emailer_aws_ses_identity_arn
   }
 
@@ -114,7 +150,7 @@ resource "helm_release" "rm_emailer" {
     name  = "emailer.sourceEmail"
     value = var.rm_source_email
   }
-  
+
   depends_on = [
     google_container_node_pool.primary_general_purpose
   ]
@@ -137,12 +173,12 @@ resource "helm_release" "redis" {
     name  = "architecture"
     value = "standalone"
   }
-  
+
   set {
     name  = "auth.password"
     value = random_password.redis_password.result
   }
-  
+
   depends_on = [
     google_container_node_pool.primary_general_purpose
   ]
