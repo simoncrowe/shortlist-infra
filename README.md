@@ -11,6 +11,8 @@ Infrastructure-as-code for **Shortlist** — a system that uses LLMs to automati
 
 ## Components
 
+The system is composed of several single-purpose microservices.
+
 | Component | Purpose |
 |---|---|
 | [`shortlist-runner`](https://github.com/simoncrowe/shortlist-runner) | Core profile assessment orchestration |
