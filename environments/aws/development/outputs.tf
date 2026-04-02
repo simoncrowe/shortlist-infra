@@ -1,6 +1,6 @@
 output "ses_domain_identity_arn" {
   description = "The ARN of the SES email domain"
-  value = module.email.ses_domain_identity_arn 
+  value       = module.email.ses_domain_identity_arn
 }
 
 output "email_sender_role_arn" {
@@ -10,5 +10,5 @@ output "email_sender_role_arn" {
 
 output "aws_region" {
   description = "The AWS region in which resources are provisioned"
-  value = data.aws_region.current.name
+  value       = data.aws_region.current.name
 }

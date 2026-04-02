@@ -1,6 +1,6 @@
 # shortlist-infra
 
-Infrastructure-as-code for **Shortlist** — a system that uses LLMs to automatically assess real estate ads using an LLM.  
+Infrastructure-as-code for **Shortlist** — a system that uses LLMs to automatically assess recruitment candidate profiles against job listings.
 
 ## Architecture
 
@@ -13,10 +13,12 @@ Infrastructure-as-code for **Shortlist** — a system that uses LLMs to automati
 
 | Helm Release | Purpose |
 |---|---|
+
 | [`shortlist-runner`](https://github.com/simoncrowe/shortlist-runner) | Core profile assessment orchestration |
 | [`shortlist-llm-assessor`](https://github.com/simoncrowe/shortlist-llm-assessor) | LLM inference on GPU nodes |
 | [`shortlist-rm-ingester`](https://github.com/simoncrowe/shortlist-rm-ingester) | Web scraping/data ingestion (optional) |
 | [`shortlist-rm-email-notifier`](https://github.com/simoncrowe/shortlist-rm-email-notifier) | Email notifications to recruiters (optional) |
+
 
 ## Tech Stack
 
