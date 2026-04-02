@@ -13,7 +13,6 @@ Infrastructure-as-code for **Shortlist** — a system that uses LLMs to automati
 
 | Helm Release | Purpose |
 |---|---|
-
 | [`shortlist-runner`](https://github.com/simoncrowe/shortlist-runner) | Core profile assessment orchestration |
 | [`shortlist-llm-assessor`](https://github.com/simoncrowe/shortlist-llm-assessor) | LLM inference on GPU nodes |
 | [`shortlist-rm-ingester`](https://github.com/simoncrowe/shortlist-rm-ingester) | Web scraping/data ingestion (optional) |
