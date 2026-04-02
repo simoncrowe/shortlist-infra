@@ -13,10 +13,10 @@ Infrastructure-as-code for **Shortlist** — a system that uses LLMs to automati
 
 | Helm Release | Purpose |
 |---|---|
-| `shortlist-runner` | Core profile assessment orchestration |
-| `shortlist-llm-assessor` | LLM inference on GPU nodes |
-| `shortlist-rm-ingester` | Recruitment data ingestion (optional) |
-| `shortlist-rm-email-notifier` | Email notifications to recruiters (optional) |
+| [`shortlist-runner`](https://github.com/simoncrowe/shortlist-runner) | Core profile assessment orchestration |
+| [`shortlist-llm-assessor`](https://github.com/simoncrowe/shortlist-llm-assessor) | LLM inference on GPU nodes |
+| [`shortlist-rm-ingester`](https://github.com/simoncrowe/shortlist-rm-ingester) | Recruitment data ingestion (optional) |
+| [`shortlist-rm-email-notifier`](https://github.com/simoncrowe/shortlist-rm-email-notifier) | Email notifications to recruiters (optional) |
 
 ## Tech Stack
 
